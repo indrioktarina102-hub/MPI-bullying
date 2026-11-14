@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misi Agen Anti-Bullying: Kelas VII - SMPN 2 Palas</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Fredoka untuk nuansa ramah remaja -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['"Fredoka"', 'sans-serif'],
+                    },
+                    colors: {
+                        skysoft: '#E0F2FE',
+                        ocean: '#0284C7',
+                        tosca: '#0D9488',
+                        toscalight: '#CCFBF1',
+                        sunshine: '#FBBF24',
+                        sunlight: '#FEF3C7',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #E0F2FE 0%, #CCFBF1 50%, #FEF3C7 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .card-shadow {
+            box-shadow: 0 12px 30px -5px rgba(2, 132, 199, 0.15), 0 4px 10px -2px rgba(13, 148, 136, 0.08);
+        }
+
+        .btn-bounce {
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+        }
+        .btn-bounce:active {
+            transform: scale(0.95);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.35s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pengaturan Khusus Saat Dicetak (Print PDF untuk LKPD & Sertifikat) */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            #app-header, #nav-bar {
+                display: none !important;
+            }
+            .print-only-container {
+                box-shadow: none !important;
+                border: 2px solid #0D9488 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 20px !important;
+            }
+            textarea {
+                border: 1px solid #cbd5e1 !important;
+                resize: none !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased flex flex-col justify-between">
+
+    <!-- HEADER NAVIGASI ATAS -->
+    <header id="app-header" class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-sky-200/70 px-4 py-3 shadow-sm">
+        <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5 cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-ocean to-tosca flex items-center justify-center text-white text-xl shadow-md">
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-base sm:text-lg text-slate-800 leading-tight">Agen Anti-Bullying</h1>
+                    <p class="text-xs text-tosca font-semibold">BK Kelas VII • SMPN 2 Palas</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Badge Nama Siswa -->
+                <div id="user-badge" class="hidden items-center gap-2 bg-skysoft border border-sky-200 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-ocean">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                    <span id="display-student-name" class="max-w-[100px] sm:max-w-[160px] truncate">Siswa</span>
+                </div>
+
+                <!-- Tombol Peta Misi -->
+                <button id="btn-home-nav" onclick="navigateTo('menu')" class="hidden btn-bounce bg-sunlight hover:bg-amber-200 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <span class="hidden sm:inline">Peta Misi</span>
+                </button>
+
+                <!-- Tombol Suara -->
+                <button onclick="toggleMute()" id="btn-mute" title="Suara Efek" class="btn-bounce w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                    <i id="mute-icon" class="fa-solid fa-volume-high"></i>
+                </button>
+
+                <!-- Tombol Profil Pengembang -->
+                <button onclick="toggleDevModal(true)" class="btn-bounce bg-toscalight hover:bg-teal-200 text-tosca border border-teal-300 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span class="hidden sm:inline">Pengembang</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- KONTEN UTAMA APLIKASI -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 sm:py-8">
+
+        <!-- =========================================================
+             1. HALAMAN AWAL (WELCOME SCREEN)
+        ========================================================== -->
+        <section id="view-home" class="fade-in flex flex-col items-center justify-center min-h-[72vh] text-center">
+            <div class="bg-white/95 backdrop-blur-sm rounded-3xl p-6 sm:p-10 max-w-2xl w-full card-shadow border-2 border-white relative overflow-hidden">
+                <!-- Dekorasi Latar -->
+                <div class="absolute -top-12 -right-12 w-36 h-36 bg-sunlight rounded-full opacity-60 pointer-events-none"></div>
+                <div class="absolute -bottom-12 -left-12 w-36 h-36 bg-toscalight rounded-full opacity-60 pointer-events-none"></div>
+
+                <div class="relative z-10">
+                    <span class="inline-flex items-center gap-2 bg-skysoft text-ocean font-bold text-xs sm:text-sm px-4 py-1.5 rounded-full mb-4 border border-sky-200">
+                        <i class="fa-solid fa-sparkles text-amber-500"></i> Layanan Bimbingan & Konseling Kelas VII
+                    </span>
+
+                    <div class="w-24 h-24 mx-auto mb-5 rounded-3xl bg-gradient-to-br from-ocean via-tosca to-emerald-500 flex items-center justify-center text-white text-5xl shadow-lg transform -rotate-3">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                    </div>
+
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-slate-800 mb-3 tracking-tight">
+                        Misi Agen Anti-Bullying: <span class="text-ocean">Kelas VII</span>
+                    </h2>
+
+                    <p class="text-slate-600 text-sm sm:text-base max-w-lg mx-auto mb-7 leading-relaxed">
+                        Selamat datang di markas besar agen kebaikan <strong>SMPN 2 Palas</strong>! Siapkan dirimu untuk mengenali bahaya perundungan, melatih empati, dan menjaga sekolah kita tetap nyaman untuk semua.
+                    </p>
+
+                    <!-- Form Input Nama Siswa -->
+                    <div class="max-w-md mx-auto bg-slate-50 p-5 rounded-2xl border border-slate-200/80 mb-5 text-left">
+                        <label for="student-name-input" class="block text-sm font-bold text-slate-700 mb-2">
+                            <i class="fa-solid fa-id-badge text-tosca mr-1"></i> Masukkan Nama Lengkapmu:
+                        </label>
+                        <input type="text" id="student-name-input" placeholder="Contoh: Ahmad Rizki Saputra" 
+                            class="w-full px-4 py-3 rounded-xl border-2 border-sky-200 focus:border-ocean focus:outline-none text-slate-800 font-medium bg-white transition"
+                            onkeypress="if(event.key === 'Enter') startMission()">
+                        <p id="name-error" class="hidden text-rose-500 text-xs font-semibold mt-2">
+                            <i class="fa-solid fa-circle-exclamation mr-1"></i> Yuk, isi nama lengkapmu dulu sebelum memulai misi!
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <button onclick="startMission()" class="btn-bounce w-full sm:w-auto bg-gradient-to-r from-ocean to-tosca hover:from-sky-700 hover:to-teal-700 text-white font-display font-bold text-lg px-8 py-3.5 rounded-2xl shadow-lg shadow-sky-500/30 flex items-center justify-center gap-2">
+                            <span>Mulai Misi Sekarang</span>
+                            <i class="fa-solid fa-rocket"></i>
+                        </button>
+                        <button onclick="toggleDevModal(true)" class="btn-bounce w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-200 font-bold text-sm px-5 py-3.5 rounded-2xl flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-user-tie text-tosca"></i>
+                            <span>Profil Pengembang</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             2. MENU UTAMA (PETA MISI)
+        ========================================================== -->
+        <section id="view-menu" class="hidden fade-in">
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-8 card-shadow border border-white mb-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-tosca bg-toscalight px-3 py-1 rounded-full">Markas Pusat Agen</span>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-800 mt-2">
+                            Halo, Agen <span id="menu-student-name" class="text-ocean">Siswa</span>! 👋
+                        </h2>
+                        <p class="text-slate-600 text-sm mt-1">Pilih pos misi di bawah ini secara berurutan untuk menuntaskan pelatihanmu.</p>
+                    </div>
+                    <!-- Indikator Progres -->
+                    <div class="bg-skysoft/80 border border-sky-200 rounded-2xl p-3.5 flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-ocean text-white flex items-center justify-center font-display font-bold text-lg" id="progress-percent">0%</div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-500 uppercase">Progres Misi</p>
+                            <p class="text-sm font-bold text-slate-800" id="progress-text">0 dari 5 Pos Selesai</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid 5 Tombol Menu -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <!-- Pos 1: Materi -->
+                    <div onclick="navigateTo('materi')" class="btn-bounce cursor-pointer group bg-gradient-to-br from-sky-50 to-white hover:to-sky-100/70 border-2 border-sky-200 rounded-3xl p-5 relative transition shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-ocean text-white flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition">
+                                <i class="fa-solid fa-book-open-reader"></i>
+                            </div>
+                            <span id="badge-materi" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-200 text-slate-600">Pos 1</span>
+                        </div>
+                        <h3 class="font-display text-xl font-bold text-slate-800 mb-1">1. Ruang Materi</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Kartu pengetahuan interaktif tentang pengertian, jenis, dampak bullying & cara menjadi Upstander.</p>
+                    </div>
+
+                    <!-- Pos 2: Simulasi -->
+                    <div onclick="navigateTo('simulasi')" class="btn-bounce cursor-pointer group bg-gradient-to-br from-teal-50 to-white hover:to-teal-100/70 border-2 border-teal-200 rounded-3xl p-5 relative transition shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-tosca text-white flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition">
+                                <i class="fa-solid fa-comments"></i>
+                            </div>
+                            <span id="badge-simulasi" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-200 text-slate-600">Pos 2</span>
+                        </div>
+                        <h3 class="font-display text-xl font-bold text-slate-800 mb-1">2. Simulasi Kasus</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Roleplay menghadapi situasi perundungan nyata di sekolah & grup WhatsApp kelas.</p>
+                    </div>
+
+                    <!-- Pos 3: Game -->
+                    <div onclick="navigateTo('game')" class="btn-bounce cursor-pointer group bg-gradient-to-br from-amber-50 to-white hover:to-amber-100/70 border-2 border-amber-200 rounded-3xl p-5 relative transition shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </div>
+                            <span id="badge-game" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-200 text-slate-600">Pos 3</span>
+                        </div>
+                        <h3 class="font-display text-xl font-bold text-slate-800 mb-1">3. Game Detektif</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Uji kepekaanmu membedakan mana candaan sehat dan mana tindakan bullying!</p>
+                    </div>
+
+                    <!-- Pos 4: LKPD -->
+                    <div onclick="navigateTo('lkpd')" class="btn-bounce cursor-pointer group bg-gradient-to-br from-indigo-50 to-white hover:to-indigo-100/70 border-2 border-indigo-200 rounded-3xl p-5 relative transition shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition">
+                                <i class="fa-solid fa-file-pen"></i>
+                            </div>
+                            <span id="badge-lkpd" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-200 text-slate-600">Pos 4</span>
+                        </div>
+                        <h3 class="font-display text-xl font-bold text-slate-800 mb-1">4. LKPD Refleksi</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Tuliskan refleksi diri & deklarasi janji anti-bullying yang bisa langsung dicetak/simpan PDF.</p>
+                    </div>
+
+                    <!-- Pos 5: Evaluasi -->
+                    <div onclick="navigateTo('evaluasi')" class="btn-bounce cursor-pointer group bg-gradient-to-br from-rose-50 to-white hover:to-rose-100/70 border-2 border-rose-200 rounded-3xl p-5 relative transition shadow-sm sm:col-span-2 lg:col-span-2">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-award"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-display text-xl font-bold text-slate-800">5. Ujian & Sertifikat Agen</h3>
+                                        <span id="badge-evaluasi" class="text-xs font-bold px-3 py-0.5 rounded-full bg-amber-100 text-amber-800">Pos Akhir</span>
+                                    </div>
+                                    <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">Selesaikan 5 soal studi kasus untuk mendapatkan <strong>Sertifikat Kelulusan Agen Anti-Bullying SMPN 2 Palas</strong>!</p>
+                                </div>
+                            </div>
+                            <div class="self-end sm:self-center">
+                                <span class="inline-flex items-center gap-1 text-sm font-bold text-rose-600 bg-white px-4 py-2 rounded-xl border border-rose-200 shadow-sm">
+                                    Mulai Ujian <i class="fa-solid fa-arrow-right"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             3. MATERI INTERAKTIF (KARTU PENGETAHUAN)
+        ========================================================== -->
+        <section id="view-materi" class="hidden fade-in">
+            <div class="bg-white/95 backdrop-blur-sm rounded-3xl p-6 sm:p-8 card-shadow border border-white max-w-3xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="navigateTo('menu')" class="text-sm font-bold text-slate-500 hover:text-ocean flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Peta
+                    </button>
+                    <span class="bg-skysoft text-ocean text-xs font-bold px-3.5 py-1.5 rounded-full border border-sky-200" id="materi-counter">
+                        Kartu 1 dari 4
+                    </span>
+                </div>
+
+                <!-- Konten Kartu Slide -->
+                <div id="materi-card-container" class="min-h-[340px] flex flex-col justify-between">
+                    <!-- Diisi dinamis oleh JS -->
+                </div>
+
+                <!-- Navigasi Slide -->
+                <div class="flex items-center justify-between pt-6 mt-6 border-t border-slate-100">
+                    <button id="btn-prev-materi" onclick="changeMateriSlide(-1)" class="btn-bounce px-5 py-2.5 rounded-xl font-bold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 disabled:opacity-40 disabled:pointer-events-none flex items-center gap-2">
+                        <i class="fa-solid fa-chevron-left"></i> Sebelumnya
+                    </button>
+                    
+                    <div id="materi-dots" class="flex gap-2"></div>
+
+                    <button id="btn-next-materi" onclick="changeMateriSlide(1)" class="btn-bounce px-5 py-2.5 rounded-xl font-bold text-sm bg-ocean text-white hover:bg-sky-700 flex items-center gap-2 shadow-md">
+                        <span>Selanjutnya</span> <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             4. SIMULASI PENGAMBILAN KEPUTUSAN (ROLEPLAY)
+        ========================================================== -->
+        <section id="view-simulasi" class="hidden fade-in">
+            <div class="bg-white/95 backdrop-blur-sm rounded-3xl p-6 sm:p-8 card-shadow border border-white max-w-3xl mx-auto">
+                <div class="flex items-center justify-between mb-5">
+                    <button onclick="navigateTo('menu')" class="text-sm font-bold text-slate-500 hover:text-tosca flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Peta
+                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="loadSimulasi(0)" id="tab-sim-0" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-tosca text-white">Kasus 1: Kantin</button>
+                        <button onclick="loadSimulasi(1)" id="tab-sim-1" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600">Kasus 2: Grup WA</button>
+                    </div>
+                </div>
+
+                <div id="simulasi-content">
+                    <!-- Diisi dinamis oleh JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             5. GAME EDUKASI ("DETEKTIF SIKAP")
+        ========================================================== -->
+        <section id="view-game" class="hidden fade-in">
+            <div class="bg-white/95 backdrop-blur-sm rounded-3xl p-6 sm:p-8 card-shadow border border-white max-w-2xl mx-auto text-center">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="navigateTo('menu')" class="text-sm font-bold text-slate-500 hover:text-amber-600 flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali
+                    </button>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full" id="game-progress">Soal 1/8</span>
+                        <span class="bg-toscalight text-tosca text-xs font-bold px-3 py-1 rounded-full">Skor: <span id="game-score">0</span></span>
+                    </div>
+                </div>
+
+                <div id="game-play-area">
+                    <div class="inline-flex items-center gap-2 bg-sunlight text-amber-900 text-xs font-bold px-4 py-1.5 rounded-full mb-4">
+                        <i class="fa-solid fa-magnifying-glass"></i> Detektif Sikap: Analisis Situasi Ini!
+                    </div>
+
+                    <div class="bg-gradient-to-b from-slate-50 to-sky-50/50 border-2 border-sky-200 rounded-3xl p-6 sm:p-8 mb-6 min-h-[160px] flex items-center justify-center">
+                        <p id="game-statement" class="font-display text-lg sm:text-xl font-semibold text-slate-800 leading-relaxed">
+                            Memuat situasi...
+                        </p>
+                    </div>
+
+                    <!-- Tombol Pilihan Game -->
+                    <div id="game-buttons" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <button onclick="answerGame('canda')" class="btn-bounce bg-emerald-500 hover:bg-emerald-600 text-white font-display font-bold py-4 px-6 rounded-2xl shadow-md flex items-center justify-center gap-2 text-base">
+                            <i class="fa-solid fa-face-laugh-beam text-xl"></i>
+                            <span>Candaan Sehat</span>
+                        </button>
+                        <button onclick="answerGame('bully')" class="btn-bounce bg-rose-500 hover:bg-rose-600 text-white font-display font-bold py-4 px-6 rounded-2xl shadow-md flex items-center justify-center gap-2 text-base">
+                            <i class="fa-solid fa-ban text-xl"></i>
+                            <span>Tindakan Bullying</span>
+                        </button>
+                    </div>
+
+                    <!-- Kotak Penjelasan Setelah Menjawab -->
+                    <div id="game-feedback" class="hidden rounded-2xl p-4 text-left border mb-4 fade-in">
+                        <p id="game-feedback-title" class="font-bold text-sm mb-1"></p>
+                        <p id="game-feedback-desc" class="text-xs sm:text-sm leading-relaxed"></p>
+                        <div class="mt-3 text-right">
+                            <button onclick="nextGameQuestion()" class="btn-bounce bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl">
+                                Lanjut Soal Berikutnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layar Selesai Game -->
+                <div id="game-result-area" class="hidden py-6 fade-in">
+                    <div class="w-20 h-20 mx-auto bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-4xl mb-4">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="font-display text-2xl font-bold text-slate-800 mb-2">Misi Detektif Selesai!</h3>
+                    <p class="text-slate-600 text-sm mb-4">Skor Kepekaan Sosialmu adalah:</p>
+                    <div class="text-4xl font-display font-bold text-tosca mb-6"><span id="game-final-score">0</span> / 80</div>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button onclick="initGame()" class="btn-bounce bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm px-5 py-3 rounded-xl">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Main Lagi
+                        </button>
+                        <button onclick="navigateTo('menu')" class="btn-bounce bg-tosca hover:bg-teal-700 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-md">
+                            Kembali ke Peta Misi <i class="fa-solid fa-check ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             6. LKPD INTERAKTIF (LEMBAR REFLEKSI DIRI)
+        ========================================================== -->
+        <section id="view-lkpd" class="hidden fade-in">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 card-shadow border border-white max-w-3xl mx-auto print-only-container">
+                <div class="flex items-center justify-between mb-6 no-print">
+                    <button onclick="navigateTo('menu')" class="text-sm font-bold text-slate-500 hover:text-indigo-600 flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Peta
+                    </button>
+                    <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">Lembar Kerja Peserta Didik</span>
+                </div>
+
+                <!-- Kop LKPD -->
+                <div class="border-b-2 border-slate-200 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h2 class="font-display text-xl sm:text-2xl font-bold text-slate-800">LKPD Refleksi: Agen Anti-Bullying</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Bimbingan dan Konseling Kelas VII • SMPN 2 Palas</p>
+                    </div>
+                    <div class="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm">
+                        <p><span class="text-slate-500">Nama Siswa:</span> <strong id="lkpd-student-name" class="text-slate-800">-</strong></p>
+                        <p><span class="text-slate-500">Guru BK:</span> <strong class="text-slate-800">Indri Oktarina, S.Pd.</strong></p>
+                    </div>
+                </div>
+
+                <!-- 3 Pertanyaan Reflektif -->
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">
+                            1. Bagaimana perasaanmu setelah mempelajari dampak dan bahaya bullying bagi teman sebaya?
+                        </label>
+                        <textarea id="lkpd-q1" rows="3" placeholder="Tuliskan perasaan dan pendapatmu secara jujur di sini..." 
+                            class="w-full p-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:outline-none text-sm text-slate-700 bg-slate-50/50"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">
+                            2. Jika suatu hari kamu melihat temanmu diejek, dikucilkan, atau dirundung di sekolah, tindakan nyata apa yang akan kamu lakukan sebagai seorang "Upstander"?
+                        </label>
+                        <textarea id="lkpd-q2" rows="3" placeholder="Tuliskan langkah nyata yang berani kamu ambil..." 
+                            class="w-full p-3.5 rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:outline-none text-sm text-slate-700 bg-slate-50/50"></textarea>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-skysoft/70 to-toscalight/70 p-5 rounded-2xl border-2 border-dashed border-tosca">
+                        <label class="block text-sm font-bold text-tosca mb-2">
+                            <i class="fa-solid fa-hand-sparkles mr-1"></i> 3. Deklarasi Janji Anti-Bullying Pribadiku:
+                        </label>
+                        <textarea id="lkpd-q3" rows="3" placeholder="Contoh: Saya berjanji akan menghargai setiap perbedaan teman, menjaga ucapan di dunia nyata maupun media sosial, serta berani melapor jika melihat perundungan..." 
+                            class="w-full p-3.5 rounded-2xl border border-teal-300 focus:border-tosca focus:outline-none text-sm text-slate-800 bg-white font-medium"></textarea>
+                    </div>
+                </div>
+
+                <p id="lkpd-alert" class="hidden text-rose-600 text-xs font-bold mt-4">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Mohon lengkapi ketiga jawaban refleksi di atas terlebih dahulu ya!
+                </p>
+
+                <!-- Tombol Aksi LKPD -->
+                <div class="mt-7 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 no-print">
+                    <p class="text-xs text-slate-500">
+                        <i class="fa-solid fa-circle-info text-indigo-500 mr-1"></i> Klik tombol di samping untuk menyimpan sebagai PDF atau mencetak LKPD.
+                    </p>
+                    <button onclick="saveAndPrintLKPD()" class="btn-bounce w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Simpan & Cetak LKPD</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             7. EVALUASI & SERTIFIKAT DIGITAL
+        ========================================================== -->
+        <section id="view-evaluasi" class="hidden fade-in">
+            <!-- Area Kuis Evaluasi -->
+            <div id="eval-quiz-container" class="bg-white/95 backdrop-blur-sm rounded-3xl p-6 sm:p-8 card-shadow border border-white max-w-3xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="navigateTo('menu')" class="text-sm font-bold text-slate-500 hover:text-rose-600 flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Peta
+                    </button>
+                    <span class="bg-rose-100 text-rose-700 text-xs font-bold px-3.5 py-1.5 rounded-full">
+                        Ujian Kelulusan Agen (5 Soal)
+                    </span>
+                </div>
+
+                <div id="eval-questions-list" class="space-y-6">
+                    <!-- Soal dirender lewat JS -->
+                </div>
+
+                <p id="eval-warning" class="hidden text-rose-600 text-xs font-bold mt-4 bg-rose-50 p-3 rounded-xl border border-rose-200">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Pastikan semua (5 soal) sudah kamu pilih jawabannya sebelum melihat hasil kelulusan!
+                </p>
+
+                <div class="mt-8 text-center">
+                    <button onclick="submitEvaluation()" class="btn-bounce bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white font-display font-bold text-base sm:text-lg px-8 py-3.5 rounded-2xl shadow-lg">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Kumpulkan Jawaban & Lihat Sertifikat
+                    </button>
+                </div>
+            </div>
+
+            <!-- Area Hasil & Sertifikat Digital -->
+            <div id="eval-result-container" class="hidden max-w-3xl mx-auto space-y-6 fade-in">
+                <!-- Ringkasan Skor & Pembahasan -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 card-shadow border border-white no-print">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-5">
+                        <div>
+                            <h3 class="font-display text-2xl font-bold text-slate-800">Hasil Ujian Kelulusan Agen</h3>
+                            <p class="text-sm text-slate-600">Berikut adalah skor dan pembahasan singkat dari jawabanmu:</p>
+                        </div>
+                        <div class="bg-toscalight border-2 border-tosca px-6 py-3 rounded-2xl text-center">
+                            <span class="block text-xs font-bold text-tosca uppercase">Nilai Akhir</span>
+                            <span id="eval-final-score" class="font-display text-3xl font-bold text-slate-800">100</span>
+                        </div>
+                    </div>
+
+                    <div id="eval-review-list" class="space-y-3 mb-6">
+                        <!-- Pembahasan soal -->
+                    </div>
+
+                    <div class="flex flex-wrap justify-between items-center gap-3 pt-3 border-t border-slate-100">
+                        <button onclick="resetEvaluation()" class="btn-bounce bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Ujian
+                        </button>
+                        <button onclick="window.print()" class="btn-bounce bg-ocean hover:bg-sky-700 text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md">
+                            <i class="fa-solid fa-print mr-1.5"></i> Cetak / Simpan Sertifikat (PDF)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SERTIFIKAT DIGITAL RESMI -->
+                <div class="bg-white rounded-3xl p-3 sm:p-5 card-shadow print-only-container">
+                    <div class="border-4 border-double border-tosca rounded-2xl p-6 sm:p-10 text-center relative overflow-hidden bg-gradient-to-br from-sky-50/60 via-white to-amber-50/60">
+                        <!-- Ornamen Sudut -->
+                        <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-tr from-ocean to-tosca text-white flex items-center justify-center text-3xl shadow-md">
+                            <i class="fa-solid fa-medal"></i>
+                        </div>
+                        <p class="text-xs font-bold uppercase tracking-[0.2em] text-tosca mb-1">SMP NEGERI 2 PALAS</p>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-800 tracking-wide mb-2">
+                            SERTIFIKAT KELULUSAN
+                        </h2>
+                        <span class="inline-block bg-sunlight text-amber-900 font-bold text-xs px-4 py-1 rounded-full border border-amber-300 mb-5">
+                            AGEN ANTI-BULLYING KELAS VII
+                        </span>
+
+                        <p class="text-xs sm:text-sm text-slate-600 mb-2">Diberikan dengan bangga kepada:</p>
+                        <h3 id="cert-student-name" class="font-display text-2xl sm:text-3xl font-bold text-ocean border-b-2 border-slate-300 inline-block px-8 pb-1 mb-4">
+                            Nama Siswa
+                        </h3>
+
+                        <p class="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed mb-7">
+                            Telah menyelesaikan seluruh rangkaian misi pembelajaran interaktif Bimbingan dan Konseling tentang <strong>Pencegahan Perundungan (Anti-Bullying)</strong> serta berkomitmen menciptakan lingkungan sekolah yang aman, ramah, dan penuh empati.
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-around gap-6 pt-4 border-t border-slate-200/80 text-xs sm:text-sm">
+                            <div>
+                                <p class="text-slate-500">Tanggal Kelulusan</p>
+                                <p id="cert-date" class="font-bold text-slate-800 mt-1">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500">Guru Bimbingan & Konseling</p>
+                                <div class="my-1 font-display text-tosca italic text-base">Tertanda Secara Digital</div>
+                                <p class="font-bold text-slate-800 underline">Indri Oktarina, S.Pd.</p>
+                                <p class="text-[11px] text-slate-500">SMPN 2 Palas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER SEDERHANA -->
+    <footer class="no-print text-center py-4 px-4 text-xs text-slate-600">
+        <p>© 2026 Media Pembelajaran Interaktif BK • Dikembangkan oleh <strong>Indri Oktarina, S.Pd.</strong> (SMPN 2 Palas)</p>
+    </footer>
+
+    <!-- =========================================================
+         MODAL PROFIL PENGEMBANG
+    ========================================================== -->
+    <div id="dev-modal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 card-shadow border-2 border-sky-100 fade-in relative">
+            <button onclick="toggleDevModal(false)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-3xl bg-gradient-to-tr from-tosca to-ocean text-white flex items-center justify-center text-3xl shadow-lg">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <span class="text-xs font-bold uppercase tracking-wider text-tosca bg-toscalight px-3 py-1 rounded-full">Profil Pengembang MPI</span>
+                <h3 class="font-display text-xl font-bold text-slate-800 mt-3">Indri Oktarina, S.Pd.</h3>
+                <p class="text-sm font-semibold text-ocean mb-4">Guru Bimbingan dan Konseling</p>
+
+                <div class="bg-slate-50 rounded-2xl p-4 text-left space-y-2.5 border border-slate-200/80 text-xs sm:text-sm mb-5">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-school text-tosca w-5 text-center"></i>
+                        <div>
+                            <span class="text-slate-500 block text-xs">Instansi / Sekolah</span>
+                            <strong class="text-slate-800">SMPN 2 Palas</strong>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-heart-pulse text-rose-500 w-5 text-center"></i>
+                        <div>
+                            <span class="text-slate-500 block text-xs">Bidang Layanan</span>
+                            <strong class="text-slate-800">Bimbingan dan Konseling (Kelas VII)</strong>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-bullseye text-amber-500 w-5 text-center"></i>
+                        <div>
+                            <span class="text-slate-500 block text-xs">Tujuan Media</span>
+                            <span class="text-slate-700">Membangun kesadaran anti-bullying, empati, dan keberanian siswa menjadi pelopor kebaikan di sekolah.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="toggleDevModal(false)" class="btn-bounce w-full bg-ocean hover:bg-sky-700 text-white font-bold py-2.5 rounded-xl text-sm">
+                    Tutup Profil
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         JAVASCRIPT LOGIKA APLIKASI & WEB AUDIO API
+    ========================================================== -->
+    <script>
+        // --- 1. SISTEM EFEK SUARA (WEB AUDIO API TANPA FILE EKSTERNAL) ---
+        let audioCtx = null;
+        let isMuted = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (isMuted) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(520, now);
+                    osc.frequency.exponentialRampToValueAtTime(680, now + 0.08);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.linearRampToValueAtTime(165, now + 0.25);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'fanfare') {
+                    osc.type = 'triangle';
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, i) => {
+                        osc.frequency.setValueAtTime(freq, now + i * 0.12);
+                    });
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                    osc.start(now);
+                    osc.stop(now + 0.6);
+                }
+            } catch (e) {
+                console.log("Audio tidak didukung:", e);
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            const icon = document.getElementById('mute-icon');
+            icon.className = isMuted ? 'fa-solid fa-volume-xmark text-rose-500' : 'fa-solid fa-volume-high';
+            if (!isMuted) playSound('click');
+        }
+
+        // --- 2. STATE APLIKASI ---
+        const appState = {
+            studentName: '',
+            completed: {
+                materi: false,
+                simulasi: false,
+                game: false,
+                lkpd: false,
+                evaluasi: false
+            },
+            currentMateriIndex: 0
+        };
+
+        // --- 3. DATA KONTEN PEMBELAJARAN ---
+        const materiSlides = [
+            {
+                badge: "Kartu 1 • Kenali Perbedaannya",
+                title: "Apa Itu Bullying & Bedanya dengan Bercanda?",
+                icon: "fa-scale-balanced",
+                color: "bg-ocean",
+                content: `
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
+                        <strong>Bullying (Perundungan)</strong> adalah perilaku agresif yang dilakukan secara <strong>sengaja</strong>, <strong>berulang-ulang</strong>, dan melibatkan <strong>ketidakseimbangan kekuatan</strong> (fisik, jumlah teman, atau popularitas) untuk menyakiti orang lain.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                        <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl">
+                            <h4 class="font-bold text-emerald-800 mb-1"><i class="fa-solid fa-face-smile mr-1"></i> Bercanda Sehat</h4>
+                            <ul class="list-disc list-inside text-emerald-700 space-y-1">
+                                <li>Kedua pihak sama-sama tertawa senang.</li>
+                                <li>Tidak ada niat merendahkan atau menyakiti.</li>
+                                <li>Langsung berhenti jika ada yang merasa tidak nyaman.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl">
+                            <h4 class="font-bold text-rose-800 mb-1"><i class="fa-solid fa-face-sad-tear mr-1"></i> Tindakan Bullying</h4>
+                            <ul class="list-disc list-inside text-rose-700 space-y-1">
+                                <li>Hanya pelaku yang tertawa, korban merasa sakit hati/takut.</li>
+                                <li>Dilakukan terus-menerus meski korban sudah menolak.</li>
+                                <li>Menyerang fisik, nama orang tua, atau harga diri.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                badge: "Kartu 2 • Waspadai Bentuknya",
+                title: "4 Jenis Bullying di Sekitar Kita",
+                icon: "fa-layer-group",
+                color: "bg-tosca",
+                content: `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                        <div class="bg-sky-50 border border-sky-200 p-3.5 rounded-2xl">
+                            <h4 class="font-bold text-ocean mb-1"><i class="fa-solid fa-hand-fist mr-1"></i> 1. Bullying Fisik</h4>
+                            <p class="text-slate-600">Memukul, mendorong, menjegal kaki, meludahi, atau merusak/menyembunyikan barang milik teman.</p>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
+                            <h4 class="font-bold text-amber-700 mb-1"><i class="fa-solid fa-comment-slash mr-1"></i> 2. Bullying Verbal</h4>
+                            <p class="text-slate-600">Mengejek fisik (body shaming), memberi julukan buruk, memaki, mengancam, atau menghina nama orang tua.</p>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 p-3.5 rounded-2xl">
+                            <h4 class="font-bold text-purple-700 mb-1"><i class="fa-solid fa-user-group mr-1"></i> 3. Bullying Sosial</h4>
+                            <p class="text-slate-600">Sengaja mengucilkan teman dari kelompok, menyebar gosip bohong, atau mengajak teman lain untuk memusuhi seseorang.</p>
+                        </div>
+                        <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-2xl">
+                            <h4 class="font-bold text-rose-700 mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> 4. Cyberbullying</h4>
+                            <p class="text-slate-600">Mengirim komentar jahat di media sosial, menyebar foto/video aib teman di grup WhatsApp, atau membuat stiker ejekan.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                badge: "Kartu 3 • Efek Jangka Panjang",
+                title: "Dampak Buruk bagi Korban & Pelaku",
+                icon: "fa-heart-crack",
+                color: "bg-rose-500",
+                content: `
+                    <p class="text-slate-600 text-sm mb-4">Bullying bukan hal sepele! Dampaknya bisa merusak masa depan kedua belah pihak:</p>
+                    <div class="space-y-3 text-xs sm:text-sm">
+                        <div class="bg-rose-50/80 border-l-4 border-rose-500 p-4 rounded-r-2xl">
+                            <h4 class="font-bold text-rose-800 mb-1">Dampak bagi Korban:</h4>
+                            <p class="text-slate-700">Merasa cemas berlebihan, kehilangan rasa percaya diri, takut berangkat ke sekolah, nilai pelajaran menurun drastis, sulit tidur, hingga mengalami trauma psikologis.</p>
+                        </div>
+                        <div class="bg-amber-50/80 border-l-4 border-amber-500 p-4 rounded-r-2xl">
+                            <h4 class="font-bold text-amber-800 mb-1">Dampak bagi Pelaku:</h4>
+                            <p class="text-slate-700">Terbiasa menyelesaikan masalah dengan kekerasan, dijauhi teman sejati, mendapat sanksi disiplin sekolah, hingga berisiko berhadapan dengan hukum di masa depan.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                badge: "Kartu 4 • Jadilah Pahlawan Sekolah",
+                title: "Cara Menjadi 'Upstander' Sejati!",
+                icon: "fa-shield-cat",
+                color: "bg-indigo-600",
+                content: `
+                    <p class="text-slate-600 text-sm mb-4">
+                        Saat melihat perundungan, jangan jadi <strong>Bystander</strong> (penonton yang diam saja). Jadilah <strong>Upstander</strong> (teman yang peduli dan bertindak)!
+                    </p>
+                    <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 space-y-2.5 text-xs sm:text-sm text-slate-700">
+                        <div class="flex items-start gap-2.5">
+                            <span class="bg-indigo-600 text-white font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs">1</span>
+                            <p><strong>Jangan Ikut Tertawa:</strong> Menertawakan ejekan membuat pelaku merasa didukung. Tunjukkan sikap tidak setuju.</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="bg-indigo-600 text-white font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs">2</span>
+                            <p><strong>Ajak Korban Menjauh:</strong> Hampiri teman yang dirundung dan ajak pergi ke tempat aman (misal: <em>"Yuk, temani aku ke perpustakaan!"</em>).</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="bg-indigo-600 text-white font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs">3</span>
+                            <p><strong>Dukung & Dengarkan:</strong> Katakan padanya bahwa ia tidak sendirian dan kejadian itu bukan salahnya.</p>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span class="bg-indigo-600 text-white font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs">4</span>
+                            <p><strong>Lapor ke Guru BK / Wali Kelas:</strong> Melapor bukan berarti "tukang ngadu", melainkan menyelamatkan teman dari bahaya!</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        const simulasiData = [
+            {
+                title: "Kasus 1: Ejekan Fisik di Kantin Sekolah",
+                setting: "Waktu istirahat di kantin SMPN 2 Palas. Bima sedang membawa semangkuk bakso. Tiba-tiba, Doni dan dua temannya menghalangi jalan Bima sambil menertawakan bentuk tubuh Bima dengan suara keras hingga dilihat banyak siswa.",
+                question: "Kamu melihat kejadian itu dari meja sebelah. Bima tampak menunduk malu dan matanya berkaca-kaca. Apa tindakan yang kamu pilih?",
+                options: [
+                    {
+                        text: "A. Ikut tertawa pelan supaya dianggap asyik oleh kelompok Doni.",
+                        type: "bad",
+                        feedbackTitle: "Kurang Tepat! Ini Membuat Korban Makin Terluka",
+                        feedbackDesc: "Dengan ikut tertawa, kamu secara tidak langsung mendukung tindakan Doni. Bima akan merasa seluruh kantin memusuhinya dan semakin kehilangan rasa percaya diri."
+                    },
+                    {
+                        text: "B. Diam saja dan pura-pura sibuk makan karena takut ikut diejek.",
+                        type: "neutral",
+                        feedbackTitle: "Sikap Bystander (Penonton Diam)",
+                        feedbackDesc: "Wajar jika kamu merasa ragu, namun diam saja membuat perundungan terus berlanjut. Bima tetap merasa sendirian menghadapi situasi yang menyakitkan."
+                    },
+                    {
+                        text: "C. Menghampiri Bima, mengajaknya duduk di mejamu, lalu melaporkan kejadian ini ke Guru BK.",
+                        type: "good",
+                        feedbackTitle: "Luar Biasa! Kamu adalah Upstander Sejati!",
+                        feedbackDesc: "Mengajak Bima menjauh langsung menghentikan situasi berbahaya tanpa memicu perkelahian. Bima merasa terlindungi, dan Guru BK (Ibu Indri) dapat membina Doni secara tepat."
+                    }
+                ]
+            },
+            {
+                title: "Kasus 2: Penyebaran Foto Aib di Grup WhatsApp Kelas",
+                setting: "Sore hari sepulang sekolah, seseorang mengirimkan foto candid Sari yang sedang tertidur di kelas dengan pose lucu, lalu diedit menjadi stiker ejekan di grup WhatsApp kelas VII. Beberapa teman mulai mengirim stiker itu berulang kali.",
+                question: "Sari mengirim pesan: 'Tolong hapus ya, aku malu banget', tapi malah ditertawakan. Sebagai anggota grup, apa yang kamu lakukan?",
+                options: [
+                    {
+                        text: "A. Menyimpan stiker tersebut untuk dipakai bercanda lagi besok di sekolah.",
+                        type: "bad",
+                        feedbackTitle: "Hati-Hati! Ini Termasuk Cyberbullying",
+                        feedbackDesc: "Menyebarkan dan menyimpan foto orang lain tanpa izin untuk bahan olok-olok melanggar privasi dan menyakiti mental Sari secara berkepanjangan."
+                    },
+                    {
+                        text: "B. Menegur dengan sopan di grup: 'Teman-teman, stop ya, Sari sudah tidak nyaman. Yuk hapus stikernya' & menyemangati Sari lewat japri.",
+                        type: "good",
+                        feedbackTitle: "Tindakan Cerdas & Penuh Empati!",
+                        feedbackDesc: "Keberanianmu bersuara di grup akan menyadarkan teman-teman lain untuk berhenti. Pesan pribadimu (japri) juga membuat Sari merasa didukung dan tidak sendirian."
+                    },
+                    {
+                        text: "C. Langsung keluar (left) dari grup kelas tanpa berkata apa-apa.",
+                        type: "neutral",
+                        feedbackTitle: "Menghindar Belum Menyelesaikan Masalah",
+                        feedbackDesc: "Keluar grup memang menghindarkanmu dari notifikasi, namun perundungan terhadap Sari di dalam grup masih terus berlangsung."
+                    }
+                ]
+            }
+        ];
+
+        const gameQuestions = [
+            {
+                statement: "Raka dan Andi saling tertawa saat tebak-tebakan lucu di teras kelas, lalu mereka jajan bersama ke kantin.",
+                answer: "canda",
+                explanation: "Ini adalah candaan sehat karena dilakukan setara, tidak ada yang direndahkan, dan keduanya merasa senang."
+            },
+            {
+                statement: "Membuat stiker WhatsApp dari foto wajah teman yang sedang menangis lalu menyebarkannya di grup kelas.",
+                answer: "bully",
+                explanation: "Ini adalah Cyberbullying! Menyebarkan foto aib tanpa izin sangat mempermalukan dan melukai perasaan teman."
+            },
+            {
+                statement: "Sengaja menyembunyikan tas dan sepatu teman sekelas hingga ia kebingungan mencarinya saat jam pulang.",
+                answer: "bully",
+                explanation: "Ini termasuk bullying fisik/barang karena merugikan, membuat korban panik, dan dilakukan berulang."
+            },
+            {
+                statement: "Memanggil teman dengan julukan nama orang tuanya setiap hari meski teman tersebut sudah marah dan melarangnya.",
+                answer: "bully",
+                explanation: "Ini adalah bullying verbal. Jika korban sudah merasa tidak nyaman dan pelaku tetap mengulanginya, itu bukan lagi bercanda."
+            },
+            {
+                statement: "Mengajak teman lain untuk tidak mau satu kelompok belajar dengan siswa baru karena logat bicaranya berbeda.",
+                answer: "bully",
+                explanation: "Ini adalah bullying sosial (pengucilan). Mengucilkan teman karena perbedaan latar belakang melukai haknya untuk berteman."
+            },
+            {
+                statement: "Dina tidak sengaja menjatuhkan buku Sinta, lalu Dina segera meminta maaf dan membantu merapikannya.",
+                answer: "canda",
+                explanation: "Ini bukan bullying karena terjadi tidak sengaja dan disertai rasa tanggung jawab serta permintaan maaf yang tulus."
+            },
+            {
+                statement: "Menulis komentar 'Gendut banget sih, nggak cocok pakai baju itu!' di postingan media sosial teman.",
+                answer: "bully",
+                explanation: "Body shaming di media sosial termasuk cyberbullying verbal yang dapat merusak rasa percaya diri seseorang."
+            },
+            {
+                statement: "Memberi ucapan selamat sambil menepuk pundak teman dengan ramah saat ia berhasil menjawab soal di papan tulis.",
+                answer: "canda",
+                explanation: "Ini adalah bentuk dukungan positif dan apresiasi yang mempererat persahabatan di kelas!"
+            }
+        ];
+
+        const evalQuestions = [
+            {
+                q: "1. Apa ciri utama yang membedakan tindakan bullying dengan bercanda biasa antar teman?",
+                options: [
+                    "Dilakukan di luar jam pelajaran sekolah",
+                    "Dilakukan sengaja, berulang-ulang, dan membuat korban merasa tersakiti/tidak berdaya",
+                    "Melibatkan lebih dari lima orang siswa di dalam kelas",
+                    "Hanya terjadi melalui pesan singkat di media sosial"
+                ],
+                correct: 1,
+                explanation: "Bullying memiliki 3 ciri utama: disengaja untuk menyakiti, dilakukan berulang, dan ada ketidakseimbangan kekuatan."
+            },
+            {
+                q: "2. Rani sengaja menyebarkan rumor bohong agar teman-teman kelas VII menjauhi Maya. Perilaku Rani termasuk jenis...",
+                options: [
+                    "Bullying Fisik",
+                    "Bullying Verbal",
+                    "Bullying Sosial (Relasional)",
+                    "Candaan Sehat"
+                ],
+                correct: 2,
+                explanation: "Mengucilkan, memfitnah, dan merusak hubungan pertemanan seseorang termasuk dalam kategori Bullying Sosial."
+            },
+            {
+                q: "3. Apa istilah bagi siswa yang berani membela, menolong, atau melaporkan tindakan perundungan yang dilihatnya?",
+                options: [
+                    "Bystander",
+                    "Upstander",
+                    "Perpetrator",
+                    "Follower"
+                ],
+                correct: 1,
+                explanation: "Upstander adalah seseorang yang tidak tinggal diam saat melihat ketidakadilan/bullying, melainkan bertindak membantu korban."
+            },
+            {
+                q: "4. Jika kamu melihat temanmu menjadi korban cyberbullying di grup chat kelas, langkah paling bijak yang harus kamu lakukan adalah...",
+                options: [
+                    "Ikut mengirim komentar pedas agar tidak dianggap kuper",
+                    "Menyimpan bukti tangkapan layar (screenshot), mendukung korban, dan melapor ke Guru BK",
+                    "Membiarkannya saja karena kejadiannya di internet, bukan di sekolah",
+                    "Menyebarkan link grup tersebut ke sekolah lain"
+                ],
+                correct: 1,
+                explanation: "Bukti digital (screenshot) sangat penting untuk membantu Guru BK menindaklanjuti kasus cyberbullying secara adil."
+            },
+            {
+                q: "5. Mengapa melapor kepada Guru BK (seperti Ibu Indri Oktarina, S.Pd.) saat melihat bullying bukanlah tindakan 'tukang ngadu'?",
+                options: [
+                    "Karena melaporkan bahaya bertujuan menyelamatkan teman dan menghentikan perilaku buruk",
+                    "Supaya mendapatkan hadiah nilai tambahan dari wali kelas",
+                    "Agar pelaku langsung dikeluarkan dari sekolah hari itu juga",
+                    "Karena siswa kelas VII tidak boleh menyelesaikan masalah sendiri"
+                ],
+                correct: 0,
+                explanation: "Melapor bertujuan melindungi keselamatan korban dan membantu pelaku mendapatkan pembinaan karakter yang tepat."
+            }
+        ];
+
+        // --- 4. FUNGSI NAVIGASI & INISIALISASI ---
+        function startMission() {
+            const input = document.getElementById('student-name-input');
+            const nameVal = input.value.trim();
+            const err = document.getElementById('name-error');
+
+            if (!nameVal) {
+                playSound('wrong');
+                err.classList.remove('hidden');
+                input.focus();
+                return;
+            }
+
+            playSound('fanfare');
+            err.classList.add('hidden');
+            appState.studentName = nameVal;
+
+            // Update UI dengan nama siswa
+            document.getElementById('display-student-name').textContent = nameVal;
+            document.getElementById('menu-student-name').textContent = nameVal;
+            document.getElementById('lkpd-student-name').textContent = nameVal;
+            document.getElementById('cert-student-name').textContent = nameVal;
+
+            document.getElementById('user-badge').classList.remove('hidden');
+            document.getElementById('user-badge').classList.add('flex');
+            document.getElementById('btn-home-nav').classList.remove('hidden');
+
+            navigateTo('menu');
+        }
+
+        function navigateTo(viewId) {
+            playSound('click');
+            const views = ['home', 'menu', 'materi', 'simulasi', 'game', 'lkpd', 'evaluasi'];
+            views.forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden');
+            });
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Trigger inisialisasi khusus per halaman
+            if (viewId === 'materi') renderMateriSlide();
+            if (viewId === 'simulasi') loadSimulasi(0);
+            if (viewId === 'game') initGame();
+            if (viewId === 'evaluasi') renderEvaluasi();
+            if (viewId === 'menu') updateProgressUI();
+        }
+
+        function toggleDevModal(show) {
+            playSound('click');
+            const modal = document.getElementById('dev-modal');
+            if (show) modal.classList.remove('hidden');
+            else modal.classList.add('hidden');
+        }
+
+        function markCompleted(section) {
+            appState.completed[section] = true;
+            updateProgressUI();
+        }
+
+        function updateProgressUI() {
+            const keys = Object.keys(appState.completed);
+            const doneCount = keys.filter(k => appState.completed[k]).length;
+            const percent = Math.round((doneCount / keys.length) * 100);
+
+            document.getElementById('progress-percent').textContent = `${percent}%`;
+            document.getElementById('progress-text').textContent = `${doneCount} dari ${keys.length} Pos Selesai`;
+
+            keys.forEach((k, idx) => {
+                const badge = document.getElementById(`badge-${k}`);
+                if (badge && appState.completed[k]) {
+                    badge.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700";
+                    badge.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Selesai`;
+                }
+            });
+        }
+
+        // --- 5. LOGIKA POS 1: MATERI INTERAKTIF ---
+        function renderMateriSlide() {
+            const idx = appState.currentMateriIndex;
+            const slide = materiSlides[idx];
+
+            document.getElementById('materi-counter').textContent = `Kartu ${idx + 1} dari ${materiSlides.length}`;
+
+            const container = document.getElementById('materi-card-container');
+            container.innerHTML = `
+                <div class="fade-in">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-2xl ${slide.color} text-white flex items-center justify-center text-xl shadow-md shrink-0">
+                            <i class="fa-solid ${slide.icon}"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">${slide.badge}</span>
+                            <h3 class="font-display text-xl sm:text-2xl font-bold text-slate-800">${slide.title}</h3>
+                        </div>
+                    </div>
+                    <div class="mt-4">${slide.content}</div>
+                </div>
+            `;
+
+            // Dots indikator
+            const dotsEl = document.getElementById('materi-dots');
+            dotsEl.innerHTML = materiSlides.map((_, i) => `
+                <span class="w-2.5 h-2.5 rounded-full transition-all ${i === idx ? 'bg-ocean w-6' : 'bg-slate-300'}"></span>
+            `).join('');
+
+            // Tombol Prev / Next
+            document.getElementById('btn-prev-materi').disabled = idx === 0;
+            const nextBtn = document.getElementById('btn-next-materi');
+            if (idx === materiSlides.length - 1) {
+                nextBtn.innerHTML = `<span>Selesai Baca Materi</span> <i class="fa-solid fa-check"></i>`;
+                nextBtn.className = "btn-bounce px-5 py-2.5 rounded-xl font-bold text-sm bg-tosca text-white hover:bg-teal-700 flex items-center gap-2 shadow-md";
+            } else {
+                nextBtn.innerHTML = `<span>Selanjutnya</span> <i class="fa-solid fa-chevron-right"></i>`;
+                nextBtn.className = "btn-bounce px-5 py-2.5 rounded-xl font-bold text-sm bg-ocean text-white hover:bg-sky-700 flex items-center gap-2 shadow-md";
+            }
+        }
+
+        function changeMateriSlide(step) {
+            playSound('click');
+            const nextIdx = appState.currentMateriIndex + step;
+            if (nextIdx >= materiSlides.length) {
+                markCompleted('materi');
+                playSound('correct');
+                navigateTo('menu');
+                return;
+            }
+            if (nextIdx >= 0) {
+                appState.currentMateriIndex = nextIdx;
+                renderMateriSlide();
+            }
+        }
+
+        // --- 6. LOGIKA POS 2: SIMULASI KASUS ---
+        let simVisited = [false, false];
+
+        function loadSimulasi(index) {
+            playSound('click');
+            const sim = simulasiData[index];
+
+            // Update styling tab
+            [0, 1].forEach(i => {
+                const tab = document.getElementById(`tab-sim-${i}`);
+                if (i === index) {
+                    tab.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-tosca text-white shadow-sm";
+                } else {
+                    tab.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200";
+                }
+            });
+
+            const container = document.getElementById('simulasi-content');
+            container.innerHTML = `
+                <div class="fade-in">
+                    <span class="inline-block bg-toscalight text-tosca text-xs font-bold px-3 py-1 rounded-full mb-2">Roleplay Pengambilan Keputusan</span>
+                    <h3 class="font-display text-xl sm:text-2xl font-bold text-slate-800 mb-3">${sim.title}</h3>
+                    
+                    <div class="bg-slate-50 border-l-4 border-tosca p-4 rounded-r-2xl mb-4 text-sm text-slate-700 leading-relaxed">
+                        <p class="font-semibold text-slate-900 mb-1"><i class="fa-solid fa-film text-tosca mr-1"></i> Situasi:</p>
+                        <p>${sim.setting}</p>
+                    </div>
+
+                    <p class="font-bold text-slate-800 text-sm sm:text-base mb-3">${sim.question}</p>
+
+                    <div class="space-y-3 mb-5">
+                        ${sim.options.map((opt, optIdx) => `
+                            <button onclick="selectSimulasiOption(${index}, ${optIdx})" 
+                                class="btn-bounce w-full text-left p-4 rounded-2xl border-2 border-slate-200 hover:border-tosca hover:bg-teal-50/40 transition text-xs sm:text-sm font-medium text-slate-700">
+                                ${opt.text}
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div id="sim-feedback-box" class="hidden rounded-2xl p-5 border-2 fade-in"></div>
+                </div>
+            `;
+        }
+
+        function selectSimulasiOption(simIdx, optIdx) {
+            const opt = simulasiData[simIdx].options[optIdx];
+            const box = document.getElementById('sim-feedback-box');
+
+            let styleClass = "";
+            let iconClass = "";
+            if (opt.type === 'good') {
+                playSound('correct');
+                styleClass = "bg-emerald-50 border-emerald-400 text-emerald-900";
+                iconClass = "fa-circle-check text-emerald-600";
+            } else if (opt.type === 'neutral') {
+                playSound('click');
+                styleClass = "bg-amber-50 border-amber-400 text-amber-900";
+                iconClass = "fa-circle-info text-amber-600";
+            } else {
+                playSound('wrong');
+                styleClass = "bg-rose-50 border-rose-400 text-rose-900";
+                iconClass = "fa-circle-xmark text-rose-600";
+            }
+
+            simVisited[simIdx] = true;
+            if (simVisited[0] && simVisited[1]) {
+                markCompleted('simulasi');
+            }
+
+            const nextActionBtn = simIdx === 0 
+                ? `<button onclick="loadSimulasi(1)" class="mt-3 btn-bounce bg-tosca text-white text-xs font-bold px-4 py-2 rounded-xl">Lanjut ke Kasus 2 <i class="fa-solid fa-arrow-right ml-1"></i></button>`
+                : `<button onclick="navigateTo('menu')" class="mt-3 btn-bounce bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl">Selesai Simulasi & Kembali ke Peta <i class="fa-solid fa-check ml-1"></i></button>`;
+
+            box.className = `rounded-2xl p-5 border-2 fade-in ${styleClass}`;
+            box.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid ${iconClass} text-xl mt-0.5"></i>
+                    <div>
+                        <h4 class="font-bold text-sm sm:text-base mb-1">${opt.feedbackTitle}</h4>
+                        <p class="text-xs sm:text-sm leading-relaxed opacity-90">${opt.feedbackDesc}</p>
+                        ${nextActionBtn}
+                    </div>
+                </div>
+            `;
+            box.classList.remove('hidden');
+        }
+
+        // --- 7. LOGIKA POS 3: GAME DETEKTIF SIKAP ---
+        let gameIndex = 0;
+        let gameScore = 0;
+        let gameAnswered = false;
+
+        function initGame() {
+            gameIndex = 0;
+            gameScore = 0;
+            document.getElementById('game-play-area').classList.remove('hidden');
+            document.getElementById('game-result-area').classList.add('hidden');
+            renderGameQuestion();
+        }
+
+        function renderGameQuestion() {
+            gameAnswered = false;
+            const q = gameQuestions[gameIndex];
+            document.getElementById('game-progress').textContent = `Soal ${gameIndex + 1}/${gameQuestions.length}`;
+            document.getElementById('game-score').textContent = gameScore;
+            document.getElementById('game-statement').textContent = `"${q.statement}"`;
+            document.getElementById('game-feedback').classList.add('hidden');
+            document.getElementById('game-buttons').classList.remove('pointer-events-none', 'opacity-60');
+        }
+
+        function answerGame(choice) {
+            if (gameAnswered) return;
+            gameAnswered = true;
+
+            const q = gameQuestions[gameIndex];
+            const isCorrect = choice === q.answer;
+            const fb = document.getElementById('game-feedback');
+            const fbTitle = document.getElementById('game-feedback-title');
+            const fbDesc = document.getElementById('game-feedback-desc');
+
+            document.getElementById('game-buttons').classList.add('pointer-events-none', 'opacity-60');
+
+            if (isCorrect) {
+                playSound('correct');
+                gameScore += 10;
+                document.getElementById('game-score').textContent = gameScore;
+                fb.className = "rounded-2xl p-4 text-left border-2 border-emerald-400 bg-emerald-50 text-emerald-900 mb-4 fade-in";
+                fbTitle.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Tepat Sekali! (+10 Poin)`;
+            } else {
+                playSound('wrong');
+                fb.className = "rounded-2xl p-4 text-left border-2 border-rose-400 bg-rose-50 text-rose-900 mb-4 fade-in";
+                fbTitle.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i> Kurang Tepat!`;
+            }
+
+            fbDesc.textContent = q.explanation;
+            fb.classList.remove('hidden');
+        }
+
+        function nextGameQuestion() {
+            playSound('click');
+            gameIndex++;
+            if (gameIndex < gameQuestions.length) {
+                renderGameQuestion();
+            } else {
+                playSound('fanfare');
+                markCompleted('game');
+                document.getElementById('game-play-area').classList.add('hidden');
+                document.getElementById('game-result-area').classList.remove('hidden');
+                document.getElementById('game-final-score').textContent = gameScore;
+            }
+        }
+
+        // --- 8. LOGIKA POS 4: LKPD INTERAKTIF ---
+        function saveAndPrintLKPD() {
+            const q1 = document.getElementById('lkpd-q1').value.trim();
+            const q2 = document.getElementById('lkpd-q2').value.trim();
+            const q3 = document.getElementById('lkpd-q3').value.trim();
+            const alertBox = document.getElementById('lkpd-alert');
+
+            if (!q1 || !q2 || !q3) {
+                playSound('wrong');
+                alertBox.classList.remove('hidden');
+                return;
+            }
+
+            playSound('correct');
+            alertBox.classList.add('hidden');
+            markCompleted('lkpd');
+
+            // Memicu dialog print browser (siswa bisa pilih Save as PDF)
+            setTimeout(() => {
+                window.print();
+            }, 250);
+        }
+
+        // --- 9. LOGIKA POS 5: EVALUASI & SERTIFIKAT ---
+        function renderEvaluasi() {
+            const container = document.getElementById('eval-questions-list');
+            container.innerHTML = evalQuestions.map((item, idx) => `
+                <div class="bg-slate-50/80 border border-slate-200 rounded-2xl p-5">
+                    <p class="font-bold text-slate-800 text-sm sm:text-base mb-3">${item.q}</p>
+                    <div class="space-y-2">
+                        ${item.options.map((opt, optIdx) => `
+                            <label class="flex items-start gap-3 p-3 rounded-xl bg-white border border-slate-200 hover:border-rose-300 cursor-pointer transition text-xs sm:text-sm">
+                                <input type="radio" name="eval-q-${idx}" value="${optIdx}" onclick="playSound('click')" class="mt-0.5 accent-rose-500">
+                                <span class="text-slate-700">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function submitEvaluation() {
+            let score = 0;
+            let unanswered = false;
+            const userAnswers = [];
+
+            evalQuestions.forEach((item, idx) => {
+                const selected = document.querySelector(`input[name="eval-q-${idx}"]:checked`);
+                if (!selected) {
+                    unanswered = true;
+                } else {
+                    const val = parseInt(selected.value);
+                    userAnswers.push(val);
+                    if (val === item.correct) score += 20;
+                }
+            });
+
+            const warnEl = document.getElementById('eval-warning');
+            if (unanswered) {
+                playSound('wrong');
+                warnEl.classList.remove('hidden');
+                return;
+            }
+
+            warnEl.classList.add('hidden');
+            playSound('fanfare');
+            markCompleted('evaluasi');
+
+            // Tampilkan skor dan pembahasan
+            document.getElementById('eval-final-score').textContent = score;
+            const reviewContainer = document.getElementById('eval-review-list');
+            reviewContainer.innerHTML = evalQuestions.map((item, idx) => {
+                const isRight = userAnswers[idx] === item.correct;
+                return `
+                    <div class="p-3.5 rounded-2xl border ${isRight ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'} text-xs sm:text-sm">
+                        <p class="font-bold ${isRight ? 'text-emerald-800' : 'text-rose-800'} mb-1">
+                            <i class="fa-solid ${isRight ? 'fa-circle-check' : 'fa-circle-xmark'} mr-1"></i>
+                            ${item.q}
+                        </p>
+                        <p class="text-slate-700"><strong>Pembahasan:</strong> ${item.explanation}</p>
+                    </div>
+                `;
+            }).join('');
+
+            // Set tanggal hari ini pada sertifikat
+            const today = new Date();
+            const optionsDate = { day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('cert-date').textContent = today.toLocaleDateString('id-ID', optionsDate);
+
+            document.getElementById('eval-quiz-container').classList.add('hidden');
+            document.getElementById('eval-result-container').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetEvaluation() {
+            playSound('click');
+            document.getElementById('eval-result-container').classList.add('hidden');
+            document.getElementById('eval-quiz-container').classList.remove('hidden');
+            renderEvaluasi();
+        }
+    </script>
+</body>
+</html>
